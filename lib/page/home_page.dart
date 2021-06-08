@@ -3,7 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_flutter/model/populat_artist_model.dart';
 import 'package:music_flutter/network/populat_artists_request.dart';
+import 'package:music_flutter/page/search_page.dart';
 import 'package:music_flutter/view/artist_view.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_flutter/page/artist_detail.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -42,6 +45,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          Container(
+              padding: EdgeInsets.only(right: 20),
+              child: InkWell(
+                  child: Icon(FontAwesomeIcons.search),
+                  onTap: ()=>switchToSearchPage()
+              )
+          ),
+        ],
       ),
       body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -74,5 +86,14 @@ class _MyHomePageState extends State<MyHomePage> {
         itemBuilder: (context,i)=>ArtistView(
           artistData:artistsList[i]
         ));
+  }
+
+  switchToSearchPage() {
+    Navigator.push(
+      context,
+      new MaterialPageRoute(
+          builder: (BuildContext context) =>
+      SearchPage()),
+    );
   }
 }

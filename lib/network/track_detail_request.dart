@@ -9,7 +9,8 @@ class TrackDetailRequest {
     var result;
     print('开始');
     // 1.拼接URL
-    final url = "http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=+$artistName+&limit=20&api_key=aa652ac51995d952d83d12093d25d9d9&format=json";
+    final url = Uri.encodeFull("http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=$artistName&limit=20&api_key=aa652ac51995d952d83d12093d25d9d9&format=json");
+
     // 2.发送请求
     try{
       var response = await http.get(Uri.parse(url),headers: {"Accept": "application/json"});
