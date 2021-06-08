@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_flutter/model/populat_artist_model.dart';
+import 'package:music_flutter/page/artist_detail.dart';
 import 'dart:ui' as ui;
 
 class ArtistView extends StatefulWidget{
@@ -24,11 +25,17 @@ class _ArtistViewState extends State<ArtistView>{
         leading: Image.network(widget.artistData.image[1].text),
         title: Text(widget.artistData.name),
         subtitle: Text(widget.artistData.listeners),
-        onTap: (){
-
-        },
+        onTap: ()=>switchToArtistDetailPage(),
       )
     );
   }
 
+  void switchToArtistDetailPage() { //跳转至movie详情界面
+    Navigator.push(
+      context,
+      new MaterialPageRoute(
+          builder: (BuildContext context) =>
+              ArtistDetailPage(artistData:widget.artistData) ),
+    );
+  }
 }
