@@ -3,38 +3,83 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_flutter/model/populat_artist_model.dart';
+import 'package:music_flutter/network/search_artist_request.dart';
+import 'package:music_flutter/page/search_page.dart';
+import 'package:music_flutter/view/artist_view.dart';
 
 class SearchArtistPage extends StatefulWidget{
+  String searchWords='';
+
+  SearchArtistPage({Key key,this.searchWords}):super(key:key);
+
   @override
   _SearchArtistPageState createState() => _SearchArtistPageState();
 }
 
 class _SearchArtistPageState extends State<SearchArtistPage>{
   String newSearchWords='';
+  Future<String> futureArtistResultList;
+  SearchArtistRequest _searchArtistRequest=SearchArtistRequest();
+  List<PopularArtistModel> artistResultList=[];
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    futureArtistResultList=getSearchArtistResultList();
+  }
+
+  Future<String> getSearchArtistResultList()async{ //这里希望搜索了之后才会显示
+    List<PopularArtistModel> result=await _searchArtistRequest.getSearchArtistResultList(widget.searchWords);
+    print('获取到的列表');
+    print(result);
+    if (result.length == 0) {
+      return 'no_result';
+    }
+    setState(() {
+      artistResultList.addAll(result);
+    });
+    return 'have_result';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         getSearchBar(),
-
+        if (widget.searchWords!=null) Expanded(  //有搜索词再加载
+            child: FutureBuilder(
+              future: futureArtistResultList,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  print('从data里获取数据');
+                  print(snapshot.data);
+                  if (snapshot.data == 'have_result') {
+                    return Expanded(child: buildArtistResultList());
+                  } else {
+                    return Text('No Result, Please Search Again');
+                  }
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+        )
       ],
     );
   }
 
-  // getSearchBar() {
-  //   return Container(
-  //     child: Row(
-  //       children: [
-  //         Container(
-  //           width: MediaQuery.of(context).size.width-60,
-  //           padding: EdgeInsets.only(left: 10,top: 10,right: 10,bottom: 10),
-  //           child: ,
-  //         )
-  //       ],
-  //     ),
-  //   )
-  // }
+  buildArtistResultList() {
+    return ListView.builder(
+        itemCount: artistResultList.length,
+        itemBuilder: (context,i)=>ArtistView(
+            artistData:artistResultList[i]
+        )
+    );
+  }
+
 
   Widget getSearchBar() {
     return Padding(
@@ -97,12 +142,7 @@ class _SearchArtistPageState extends State<SearchArtistPage>{
                 ),
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  // Navigator.push(
-                  //   context,
-                  //   new MaterialPageRoute(
-                  //       builder: (BuildContext context) => SearchResultPage(
-                  //           searchWords: widget.newSearchWords)),
-                  // );
+                  switchToSearchPage();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -114,6 +154,14 @@ class _SearchArtistPageState extends State<SearchArtistPage>{
           ),
         ],
       ),
+    );
+  }
+  switchToSearchPage() {
+    Navigator.push(
+      context,
+      new MaterialPageRoute(
+          builder: (BuildContext context) =>
+              SearchPage(searchWords: newSearchWords,)),
     );
   }
 

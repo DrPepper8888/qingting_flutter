@@ -11,7 +11,9 @@ import 'package:music_flutter/page/search_artist_page.dart';
 import 'package:music_flutter/page/search_track_page.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage({Key key}) : super(key: key);
+  String searchWords='';
+
+  SearchPage({Key key,this.searchWords}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -69,7 +71,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
           return TabBarView(
             controller: _tabController,
             children: <Widget>[
-              SearchArtistPage(),
+              SearchArtistPage(searchWords: widget.searchWords,),
               SearchTrackPage()
             ],
           );
