@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
           return TabBarView(
             controller: _tabController,
             children: <Widget>[
-              SearchArtistPage(searchWords: widget.searchWords,),
+              SearchArtistPage(),
               SearchTrackPage()
             ],
           );

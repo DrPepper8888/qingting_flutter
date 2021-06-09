@@ -47,8 +47,9 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       child: Scaffold(
         body: Column(
           children: [
-            Image.network(widget.artistData.image[1].text), //todo 需要替换，这个api已经拿不到图片了
+            Image.network('https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'), //todo 需要替换，这个api已经拿不到图片了
             Container(
+              padding: EdgeInsets.only(left: 20,right: 20,top: 20,bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -56,13 +57,13 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
                     widget.artistData.name,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 10
+                      fontSize: 30
                     ),
                   ),
                   Text(
-                      'listner:'+widget.artistData.listeners,
+                      'listener:'+widget.artistData.listeners,
                     style: TextStyle(
-                      fontSize: 10
+                      fontSize: 20
                     ),
                   )
                 ],

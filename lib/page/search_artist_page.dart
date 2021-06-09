@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,31 +6,29 @@ import 'package:music_flutter/network/search_artist_request.dart';
 import 'package:music_flutter/page/search_page.dart';
 import 'package:music_flutter/view/artist_view.dart';
 
-class SearchArtistPage extends StatefulWidget{
-  String searchWords='';
-
-  SearchArtistPage({Key key,this.searchWords}):super(key:key);
+class SearchArtistPage extends StatefulWidget {
+  SearchArtistPage({Key key}) : super(key: key);
 
   @override
   _SearchArtistPageState createState() => _SearchArtistPageState();
 }
 
-class _SearchArtistPageState extends State<SearchArtistPage>{
-  String newSearchWords='';
+class _SearchArtistPageState extends State<SearchArtistPage> {
+  String newSearchWords = '';
   Future<String> futureArtistResultList;
-  SearchArtistRequest _searchArtistRequest=SearchArtistRequest();
-  List<PopularArtistModel> artistResultList=[];
-  
+  SearchArtistRequest _searchArtistRequest = SearchArtistRequest();
+  List<PopularArtistModel> artistResultList = [];
+  List<Widget> todoFutureBuilder = [];
+
   @override
   void initState() {
-    // TODO: implement initState
+    todoFutureBuilder.add(Text('This is result'));
     super.initState();
-    futureArtistResultList=getSearchArtistResultList();
   }
 
-  Future<String> getSearchArtistResultList()async{ //这里希望搜索了之后才会显示
-    List<PopularArtistModel> result=await _searchArtistRequest.getSearchArtistResultList(widget.searchWords);
-    print('获取到的列表');
+  Future<String> getSearchArtistResultList() async {
+    List<PopularArtistModel> result =
+        await _searchArtistRequest.getSearchArtistResultList(newSearchWords);
     print(result);
     if (result.length == 0) {
       return 'no_result';
@@ -45,41 +41,26 @@ class _SearchArtistPageState extends State<SearchArtistPage>{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        getSearchBar(),
-        if (widget.searchWords!=null) Expanded(  //有搜索词再加载
-            child: FutureBuilder(
-              future: futureArtistResultList,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  print('从data里获取数据');
-                  print(snapshot.data);
-                  if (snapshot.data == 'have_result') {
-                    return Expanded(child: buildArtistResultList());
-                  } else {
-                    return Text('No Result, Please Search Again');
-                  }
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                return CircularProgressIndicator();
-              },
+    return Scaffold(
+      body: Column(
+        children: [
+          getSearchBar(),
+          Expanded(
+            child: Column(
+              children: todoFutureBuilder,
             ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
   buildArtistResultList() {
     return ListView.builder(
         itemCount: artistResultList.length,
-        itemBuilder: (context,i)=>ArtistView(
-            artistData:artistResultList[i]
-        )
-    );
+        itemBuilder: (context, i) =>
+            ArtistView(artistData: artistResultList[i]));
   }
-
 
   Widget getSearchBar() {
     return Padding(
@@ -142,12 +123,14 @@ class _SearchArtistPageState extends State<SearchArtistPage>{
                 ),
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  switchToSearchPage();
+                  showSearchArtistResults();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                        size: 20,),
+                  child: Icon(
+                    FontAwesomeIcons.search,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -156,13 +139,31 @@ class _SearchArtistPageState extends State<SearchArtistPage>{
       ),
     );
   }
-  switchToSearchPage() {
-    Navigator.push(
-      context,
-      new MaterialPageRoute(
-          builder: (BuildContext context) =>
-              SearchPage(searchWords: newSearchWords,)),
-    );
-  }
 
+  //problem link :https://stackoverflow.com/questions/67900571/flutter-refresh-widgets-content-but-it-remains-old-data/67900697#67900697
+  showSearchArtistResults() {
+    setState(() {
+      todoFutureBuilder.clear();
+      artistResultList.clear();
+      List<Widget> newData = [Text('Result')];
+      newData.add(FutureBuilder(
+        future: getSearchArtistResultList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            print(snapshot.data);
+            if (snapshot.data == 'have_result') {
+              return Expanded(child: buildArtistResultList());
+            } else {
+              return Text('No Result, Please Search Again');
+            }
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        },
+      ));
+      todoFutureBuilder = newData;
+      print(todoFutureBuilder);
+    });
+  }
 }

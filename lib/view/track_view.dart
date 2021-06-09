@@ -20,10 +20,11 @@ class _TrackViewState extends State<TrackView>{
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 10,right: 10),
         child: ListTile(
-          leading: Image.network(widget.trackData.image[1].text),
+          leading: Image.network('https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png'),
           title: Text(widget.trackData.name),
-          subtitle: Text(widget.trackData.listeners),
+          subtitle: Text('Listener: '+widget.trackData.listeners),
           onTap: (){
               //todo 点击歌曲应该能够播放
           },
