@@ -1,40 +1,69 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_flutter/model/track_detail_from_search_model.dart';
+import 'package:music_flutter/model/track_detail_model.dart';
+import 'package:music_flutter/network/search_artist_request.dart';
+import 'package:music_flutter/page/search_page.dart';
+import 'package:music_flutter/view/artist_view.dart';
+import 'package:music_flutter/network/search_track_request.dart';
+import 'package:music_flutter/view/track_view_from_search.dart';
 
-class SearchTrackPage extends StatefulWidget{
+class SearchTrackPage extends StatefulWidget {
+  SearchTrackPage({Key key}) : super(key: key);
+
   @override
   _SearchTrackPageState createState() => _SearchTrackPageState();
 }
 
-class _SearchTrackPageState extends State<SearchTrackPage>{
-  String newSearchWords='';
+class _SearchTrackPageState extends State<SearchTrackPage> {
+  String newSearchWords = '';
+  Future<String> futureTrackResultList;
+  SearchTrackRequest _searchTrackRequest = SearchTrackRequest();
+  List<TrackDetailFromSearchModel> trackResultList = [];
+  List<Widget> todoFutureBuilder = [];
+
+  @override
+  void initState() {
+    todoFutureBuilder.add(Container(height: 10,));
+    super.initState();
+  }
+
+  Future<String> getSearchTrackResultList() async {  //用于从api获取数据的异步方法
+    List<TrackDetailFromSearchModel> result =
+    await _searchTrackRequest.getSearchTrackResultList(newSearchWords);
+    print(result);
+    if (result.length == 0) {
+      return 'no_result';
+    }
+    setState(() {
+      trackResultList.addAll(result);
+    });
+    return 'have_result';
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        getSearchBar(),
-
-      ],
+    return Scaffold(
+      body: Column(
+        children: [
+          getSearchBar(),
+          Expanded(
+            child: Column(
+              children: todoFutureBuilder,
+            ),
+          )
+        ],
+      ),
     );
   }
 
-  // getSearchBar() {
-  //   return Container(
-  //     child: Row(
-  //       children: [
-  //         Container(
-  //           width: MediaQuery.of(context).size.width-60,
-  //           padding: EdgeInsets.only(left: 10,top: 10,right: 10,bottom: 10),
-  //           child: ,
-  //         )
-  //       ],
-  //     ),
-  //   )
-  // }
+  buildTrackResultList() {  //构建结果的listview
+    return ListView.builder(
+        itemCount: trackResultList.length,
+        itemBuilder: (context, i) =>
+           TrackViewFromSearch(trackData: trackResultList[i]));
+  }
 
   Widget getSearchBar() {
     return Padding(
@@ -69,7 +98,7 @@ class _SearchTrackPageState extends State<SearchTrackPage>{
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Search by the track name',
+                      hintText: '输入歌名',
                     ),
                   ),
                 ),
@@ -97,17 +126,14 @@ class _SearchTrackPageState extends State<SearchTrackPage>{
                 ),
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  // Navigator.push(
-                  //   context,
-                  //   new MaterialPageRoute(
-                  //       builder: (BuildContext context) => SearchResultPage(
-                  //           searchWords: widget.newSearchWords)),
-                  // );
+                  showSearchArtistResults();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                    size: 20,),
+                  child: Icon(
+                    FontAwesomeIcons.search,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -117,4 +143,30 @@ class _SearchTrackPageState extends State<SearchTrackPage>{
     );
   }
 
+  //problem link :https://stackoverflow.com/questions/67900571/flutter-refresh-widgets-content-but-it-remains-old-data/67900697#67900697
+  showSearchArtistResults() {
+    setState(() {
+      todoFutureBuilder.clear();
+      trackResultList.clear();
+      List<Widget> newData = [Container(height: 10,)];
+      newData.add(FutureBuilder(
+        future: getSearchTrackResultList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            print(snapshot.data);
+            if (snapshot.data == 'have_result') {
+              return Expanded(child: buildTrackResultList());
+            } else {
+              return Text('No Result, Please Search Again');
+            }
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        },
+      ));
+      todoFutureBuilder = newData;
+      print(todoFutureBuilder);
+    });
+  }
 }

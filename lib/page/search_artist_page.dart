@@ -22,7 +22,7 @@ class _SearchArtistPageState extends State<SearchArtistPage> {
 
   @override
   void initState() {
-    todoFutureBuilder.add(Text('This is result'));
+    todoFutureBuilder.add(Container(height: 10,));
     super.initState();
   }
 
@@ -95,7 +95,7 @@ class _SearchArtistPageState extends State<SearchArtistPage> {
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Search by the artist name',
+                      hintText: '输入歌手名称',
                     ),
                   ),
                 ),
@@ -145,7 +145,7 @@ class _SearchArtistPageState extends State<SearchArtistPage> {
     setState(() {
       todoFutureBuilder.clear();
       artistResultList.clear();
-      List<Widget> newData = [Text('Result')];
+      List<Widget> newData = [Container(height: 10,)];
       newData.add(FutureBuilder(
         future: getSearchArtistResultList(),
         builder: (context, snapshot) {

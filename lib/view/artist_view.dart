@@ -24,7 +24,7 @@ class _ArtistViewState extends State<ArtistView>{
       child: ListTile(
         leading: Image.network('https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png'),
         title: Text(widget.artistData.name),
-        subtitle: Text(widget.artistData.listeners),
+        subtitle: Text('Listner: '+widget.artistData.listeners),
         onTap: ()=>switchToArtistDetailPage(),
       )
     );
