@@ -50,8 +50,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
             Image.network('https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'), //todo 需要替换，这个api已经拿不到图片了
             Container(
               padding: EdgeInsets.only(left: 20,right: 20,top: 20,bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child:Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     widget.artistData.name,
