@@ -49,15 +49,15 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('搜索'),
+          title: Text('Search'),
           elevation: 0.7,
           bottom: TabBar(
             controller: _tabController,
             indicatorColor: Colors.white,
             tabs: <Widget>[
-              Tab(text: "搜歌手"),
+              Tab(text: "Artist"),
               Tab(
-                text: "搜歌曲",
+                text: "Track",
               ),
             ],
           ),

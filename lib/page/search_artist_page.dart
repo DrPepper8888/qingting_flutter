@@ -95,7 +95,7 @@ class _SearchArtistPageState extends State<SearchArtistPage> {
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: '输入歌手名称',
+                      hintText: 'Input artist name',
                     ),
                   ),
                 ),

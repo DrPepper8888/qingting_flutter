@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_flutter/model/populat_artist_model.dart';
 import 'package:music_flutter/page/artist_detail.dart';
 import 'dart:ui' as ui;
@@ -22,7 +23,10 @@ class _ArtistViewState extends State<ArtistView>{
   Widget build(BuildContext context) {
     return Container(
       child: ListTile(
-        leading: Image.network('https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png'),
+        // leading: Image.network('https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png'),
+        leading: Icon(
+          FontAwesomeIcons.userCircle
+        ),
         title: Text(widget.artistData.name),
         subtitle: Text('Listner: '+widget.artistData.listeners),
         onTap: ()=>switchToArtistDetailPage(),

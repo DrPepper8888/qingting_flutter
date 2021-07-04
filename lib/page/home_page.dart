@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_flutter/model/populat_artist_model.dart';
@@ -10,25 +9,26 @@ import 'package:music_flutter/page/artist_detail.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
-  final String title='轻听';
+  final String title = 'LiListen';
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<PopularArtistModel> artistsList=[];
+  List<PopularArtistModel> artistsList = [];
   Future<String> futureList;
   PopularArtistsRequest _popularArtistsRequest = PopularArtistsRequest();
 
   @override
   void initState() {
     super.initState();
-    futureList=getPopularList();
+    futureList = getPopularList();
   }
 
-  Future<String> getPopularList()async{
-    List<PopularArtistModel> result=await  _popularArtistsRequest.getPopularArtistsList() as List<PopularArtistModel>;
+  Future<String> getPopularList() async {
+    List<PopularArtistModel> result = await _popularArtistsRequest
+        .getPopularArtistsList() as List<PopularArtistModel>;
     print('获取到的列表');
     print(result);
     if (result.length == 0) {
@@ -50,50 +50,44 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(right: 20),
               child: InkWell(
                   child: Icon(FontAwesomeIcons.search),
-                  onTap: ()=>switchToSearchPage()
-              )
-          ),
+                  onTap: () => switchToSearchPage())),
         ],
       ),
       body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FutureBuilder(
-              future: futureList,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  print('从data里获取数据');
-                  print(snapshot.data);
-                  if (snapshot.data == 'have_result') {
-                    return Expanded(child: buildArtistResultList());
-                  } else {
-                    return Text('No Result, Please Search Again');
-                  }
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FutureBuilder(
+            future: futureList,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                print('从data里获取数据');
+                print(snapshot.data);
+                if (snapshot.data == 'have_result') {
+                  return Expanded(child: buildArtistResultList());
+                } else {
+                  return Text('No Result, Please Search Again');
                 }
-                return CircularProgressIndicator();
-              },
-            ),
-          ],
-        ),// This trailing comma makes auto-formatting nicer for build methods.
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
+            },
+          ),
+        ],
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
   Widget buildArtistResultList() {
     return ListView.builder(
         itemCount: artistsList.length,
-        itemBuilder: (context,i)=>ArtistView(
-          artistData:artistsList[i]
-        ));
+        itemBuilder: (context, i) => ArtistView(artistData: artistsList[i]));
   }
 
   switchToSearchPage() {
     Navigator.push(
       context,
-      new MaterialPageRoute(
-          builder: (BuildContext context) =>
-      SearchPage()),
+      new MaterialPageRoute(builder: (BuildContext context) => SearchPage()),
     );
   }
 }

@@ -98,7 +98,7 @@ class _SearchTrackPageState extends State<SearchTrackPage> {
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: '输入歌名',
+                      hintText: 'Input track name',
                     ),
                   ),
                 ),
